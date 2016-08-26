@@ -26,6 +26,8 @@
 
         Create usage band to 1,2,3, nan = 0
 
+        
+
         '''
 
         self.df.UsageBand = self.df.UsageBand.map({'Low': 1, 'Medium': 2, 'High': 3, np.nan : 0})
