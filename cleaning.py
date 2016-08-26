@@ -17,6 +17,8 @@ class Cleaner(object):
         self.fiProductClassDesc()
         self.prod_group()
         self.enclosure()
+        self.clean_date()
+        self.add_region()
 
 
     def fiProductClassDesc(self):
@@ -74,3 +76,17 @@ class Cleaner(object):
             return 4
         else:
             return 5
+
+
+
+    def clean_date(self):
+        self.df_in.loc[df_in['YearMade']==1000,'YearMade'] = 2000
+        self.df_in['saledate_year'] = pd.to_datetime(self.df_in['saledate']).dt.year
+        self.df_in.drop('saledate', axis=1)
+        self.df_in['year_diff'] = self.df_in['saledate_year'] - self.df_in['YearMade']
+
+        self.df['year_diff'] = self.df_in['year_diff']
+        self.df['YearMade'] = self.df_in['YearMade']
+        self.df['saledate_year'] = self.df_in['saledate_year']
+
+        self.cd_index_todrop = self.df_in[self.df_in['year_diff'] < 0].index
