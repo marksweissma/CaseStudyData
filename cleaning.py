@@ -29,9 +29,8 @@ class Cleaner(object):
         self.df['fiPCD'] = pcd.str.extract(pattern).astype('float').mean(axis=1)
 
     def prod_group(self):
-        dummies = pd.get_dummies(self.df_in)
-        for i in dummies[1:]:
-            self.df[i] = dummies[i]
+        dummies = pd.get_dummies(self.df_in['ProductGroup'], drop_first=True)
+	self.df[dummies.columns] = dummies
 
     def enclosure(self):
         '''
@@ -61,7 +60,7 @@ class Cleaner(object):
         self.southwest = ('Texas','Arizona','New Mexico','Oklahoma')
         self.other = ('Unspecified','Puerto Rico','Hawaii','Alaska')
 
-        self.df['region'] = self.df_in['state'].apply(_to_region)
+        self.df['region'] = self.df_in['state'].apply(self._to_region)
 
     def _to_region(self,state):
         if state in self.northeast:
@@ -80,7 +79,7 @@ class Cleaner(object):
 
 
     def clean_date(self):
-        self.df_in.loc[df_in['YearMade']==1000,'YearMade'] = 2000
+        self.df_in.loc[self.df_in['YearMade']==1000,'YearMade'] = 2000
         self.df_in['saledate_year'] = pd.to_datetime(self.df_in['saledate']).dt.year
         self.df_in.drop('saledate', axis=1)
         self.df_in['year_diff'] = self.df_in['saledate_year'] - self.df_in['YearMade']
