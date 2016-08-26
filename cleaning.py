@@ -15,6 +15,8 @@ class Cleaner(object):
         """
         """
         self.fiProductClassDesc()
+        self.prod_group()
+        self.enclosure()
 
         
     def fiProductClassDesc(self):
@@ -24,3 +26,27 @@ class Cleaner(object):
         pattern = re.compile(r'[^\d]*(\d*\.\d)[^\d]*(\d*\.\d)')
         self.df['fiPCD'] = pcd.str.extract(pattern).astype('float').mean(axis=1)
 
+    def prod_group(self):
+        dummies = pd.get_dummies(self.df_in, )
+        for i in dummies[1:]:
+            self.df[i] = dummies[i]
+
+    def enclosure(self):
+        '''
+        Input: DataFrame
+        Output: DataFrame with dummified variables for Enclosure Series.
+
+        Creates dummy variables for enclosure types.
+
+        '''
+        # Create dummies.
+        dummies = pd.get_dummies(self.df.Enclosure)
+
+        # Define labels for features.
+        enclosure_labels = dummies.columns
+
+        # Append the dummies to dataframe.
+        self.df[enclosure_labels] = dummies
+
+        # Drop the none or unspecified column
+        self.df.drop('None or Unspecified', axis =1)
